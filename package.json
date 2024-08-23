@@ -16,5 +16,8 @@
   "scripts": {
     "start": "node application.js",
     "dev": "nodemon application.js"
+  },
+  "engines": {
+    "node": "v19.8.1"
   }
 }
