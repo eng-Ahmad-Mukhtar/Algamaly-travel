@@ -135,16 +135,16 @@ Application.use(express.json());
 const session = require('express-session');
 const { SESSION_SECRET } = process.env;
 
-Application.use(
-  session({
-    secret: SESSION_SECRET,
-    saveUninitialized: true,
-    resave: false,
-    // 30 * 60 * 1000
-    cookie: { maxAge: 2 * 3600000  },
-    rolling: false,
-  })
-);
+// Application.use(
+//   session({
+//     secret: SESSION_SECRET,
+//     saveUninitialized: true,
+//     resave: false,
+//     // 30 * 60 * 1000
+//     cookie: { maxAge: 2 * 3600000  },
+//     rolling: false,
+//   })
+// );
 
 // // الاتصال بقاعدة البيانات MongoDB
 const mongoose = require('mongoose');
