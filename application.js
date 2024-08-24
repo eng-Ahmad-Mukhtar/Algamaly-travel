@@ -140,6 +140,7 @@ Application.use(
     secret: SESSION_SECRET,
     saveUninitialized: true,
     resave: false,
+    // 30 * 60 * 1000
     cookie: { maxAge: 2 * 3600000  },
     rolling: false,
   })
