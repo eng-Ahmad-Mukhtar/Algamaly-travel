@@ -173,14 +173,10 @@ const port = process.env.PORT || 3000;
 
 app.set('view engine', 'ejs');
 app.use(express.static('public'));
-app.set('views', './views');
+// app.set('views', './views');
 app.set('views', path.join(__dirname, 'views'));
 app.get('/', (req, res) => {
-  
-
         res.render("index")
-    
-   
 });
 
 
