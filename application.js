@@ -174,7 +174,7 @@ const port = process.env.PORT || 3000;
 app.set('view engine', 'ejs');
 app.use(express.static('public'));
 app.set('views', './views');
-
+app.set('views', path.join(__dirname, 'views'));
 app.get('/', (req, res) => {
   
 
@@ -182,18 +182,7 @@ app.get('/', (req, res) => {
     
    
 });
-app.get('/login', (req, res) => {
-    if (req.session.user) {
-    
-        let  complete = req.session.complete
-        res.status(200).render("add_new" , {complete ,  loged_user: req.session.user})
-     
-        }else{
-         res.render("notAllow")
-        }
-    
-   
-});
+
 
 
 
