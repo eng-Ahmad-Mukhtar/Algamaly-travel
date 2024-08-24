@@ -127,6 +127,9 @@ const mongoose = require('mongoose');
 mongoose.connect(process.env.DATABASE_CONNECTION, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => {
     console.log('Connected to MongoDB');
+    Application.listen(port, '0.0.0.0', async () => {
+       console.log(`Application running on http://localhost:${port}`);
+    })
   })
   .catch((err) => {
     console.error('Error connecting to MongoDB:', err);
