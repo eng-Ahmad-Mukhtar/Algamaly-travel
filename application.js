@@ -160,23 +160,52 @@ mongoose.connect(process.env.DATABASE_CONNECTION, { useNewUrlParser: true, useUn
 
 // 
 
-Application.use(
+// Application.use(
+//     session({
+//       secret: SESSION_SECRET,
+//       saveUninitialized: true,
+//       resave: true,
+//       // 30 * 60 * 1000
+//       cookie: { maxAge: 9 * 3600000  },
+//     //   rolling: false,
+//     })
+//   );
+
+// 
+// 
+// 
+// 
+
+  const MongoDBStore = require('connect-mongodb-session')(session);
+
+  // إنشاء تخزين الجلسات في MongoDB
+  const store = new MongoDBStore({
+    uri: process.env.DATABASE_CONNECTION,  // استخدم نفس URI لقاعدة البيانات الخاصة بك
+    collection: 'sessions'  // اسم مجموعة التخزين للجلسات
+  });
+  
+  store.on('error', function(error) {
+    console.error('MongoDB Session Store Error:', error);
+  });
+  
+  // إعداد الجلسة
+  Application.use(
     session({
-      secret: SESSION_SECRET,
-      saveUninitialized: true,
-      resave: true,
-      // 30 * 60 * 1000
-      cookie: { maxAge: 9 * 3600000  },
-    //   rolling: false,
+      secret: process.env.SESSION_SECRET,  // تأكد من استخدام `SESSION_SECRET` من متغيرات البيئة
+      saveUninitialized: false,  // عدم حفظ الجلسات الفارغة
+      resave: false,  // عدم إعادة حفظ الجلسات غير المعدلة
+      store: store,  // تخزين الجلسة في MongoDB
+      cookie: {
+        maxAge:30 * 60 * 1000  // 30m ساعات، يمكنك تغيير القيمة حسب الحاجة
+      }
     })
   );
 
 
-
-
-
-
-
+// 
+// 
+// 
+// 
 
 
 
