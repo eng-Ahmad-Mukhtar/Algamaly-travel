@@ -133,29 +133,84 @@ Application.use(express.json());
 
 // // إعداد جلسات المستخدم
 const session = require('express-session');
-const { SESSION_SECRET } = process.env;
+// const { SESSION_SECRET } = process.env;
 
-Application.use(
-  session({
-    secret: SESSION_SECRET,
-    saveUninitialized: true,
-    resave: false,
-    // 30 * 60 * 1000
-    cookie: { maxAge: 2 * 3600000  },
-    rolling: false,
-  })
-);
+// Application.use(
+//   session({
+//     secret: SESSION_SECRET,
+//     saveUninitialized: true,
+//     resave: false,
+//     // 30 * 60 * 1000
+//     cookie: { maxAge: 2 * 3600000  },
+//     rolling: false,
+//   })
+// );
 
 // // الاتصال بقاعدة البيانات MongoDB
-const mongoose = require('mongoose');
-mongoose.connect(process.env.DATABASE_CONNECTION, { useNewUrlParser: true, useUnifiedTopology: true })
-  .then(() => {
-    console.log('Connected to MongoDB');
+// const mongoose = require('mongoose');
+// mongoose.connect(process.env.DATABASE_CONNECTION, { useNewUrlParser: true, useUnifiedTopology: true })
+//   .then(() => {
+//     console.log('Connected to MongoDB');
    
-  })
-  .catch((err) => {
-    console.error('Error connecting to MongoDB:', err);
-  });
+//   })
+//   .catch((err) => {
+//     console.error('Error connecting to MongoDB:', err);
+//   });
+
+
+// 
+
+const MongoDBStore = require('connect-mongodb-session')(session);
+
+// إعداد تخزين الجلسة في MongoDB
+const store = new MongoDBStore({
+  uri: 'mongodb+srv://Ahmed:12345@cluster0.5q4qm.mongodb.net/Algamaly?retryWrites=true&w=majority&appName=Cluster0', // استبدل بقيمة URI لقاعدة البيانات الخاصة بك
+  collection: 'sessions'
+});
+
+
+
+
+Application.use(
+    session({
+      secret: 'your_secret_key', // استبدل بقيمة المفتاح السري لجلسة
+      resave: false,
+      saveUninitialized: false,
+      store: store, // تخزين الجلسة في MongoDB
+      cookie: {
+        maxAge: 30 * 60 * 1000 // 30 دقيقة
+      }
+    })
+  );
+
+
+
+
+
+
+
+
+
+
+
+
+
+// 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 // // إضافة المسارات (Routes)
 const home = require('./Router/home_route');
