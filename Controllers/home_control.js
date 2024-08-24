@@ -2,6 +2,8 @@
 
 const AysncHandler = require("express-async-handler")
 const Subscriber = require("../models/client")
+const moment = require("moment")
+
 const Home_page = AysncHandler(async (req, res) => {
 
     res.status(200).render("index")
@@ -292,7 +294,7 @@ const search_subiscription_direction  = AysncHandler(async (req, res) => {
 
 // all
 
-const moment = require("moment")
+
   const allUser = AysncHandler(async (req, res) => {
     if ( req.session.user) {
         const dataArray = await Subscriber.find({});

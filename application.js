@@ -140,7 +140,7 @@ Application.use(
     secret: SESSION_SECRET,
     saveUninitialized: true,
     resave: false,
-    // cookie: { maxAge: 600000 },
+    cookie: { maxAge: 60000000 },
     rolling: false,
   })
 );
