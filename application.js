@@ -164,10 +164,10 @@ Application.use(
     session({
       secret: SESSION_SECRET,
       saveUninitialized: true,
-      resave: false,
+      resave: true,
       // 30 * 60 * 1000
-      cookie: { maxAge: 2 * 3600000  },
-      rolling: false,
+      cookie: { maxAge: 9 * 3600000  },
+    //   rolling: false,
     })
   );
 

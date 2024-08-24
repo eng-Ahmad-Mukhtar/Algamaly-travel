@@ -18,7 +18,7 @@ const signIn = AysncHandler(async (req, res) => {
 
 const log_page = AysncHandler(async (req, res) => {
     if (req.session.user) {
-        console.log(req.session);
+       
         let complete = req.session.complete
         res.status(200).render("add_new", { complete, loged_user: req.session.user })
 
@@ -304,12 +304,9 @@ const allUser = AysncHandler(async (req, res) => {
         res.render('allAgents', { data, loged_user: req.session.user, moment });
     }
     else {
-        console.log(req.session);
-        const dataArray = await Subscriber.find({});
-
-        const data = dataArray || []
-        res.render('allAgents', { data, loged_user: req.session.user, moment });
-        // res.render("notAllow")
+        
+        
+        res.render("notAllow")
     }
 })
 module.exports = {
