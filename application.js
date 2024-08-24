@@ -93,61 +93,82 @@
 // Application.use((req, res) => {
 //     res.status(404).send("لا يوجد صفحه ")
 // })
-const express = require('express');
-const Application = express();
 
-require('dotenv').config();
-const port = process.env.PORT || 1000;
 
-// إعداد محرك القوالب
-Application.set('view engine', 'ejs');
-Application.use(express.static('public'));
-Application.use(express.static('uploads'));
 
-// استخدام المكونات المتوسطة (middleware) لتحليل البيانات
-Application.use(express.urlencoded({ extended: false }));
-Application.use(express.json());
 
-// إعداد جلسات المستخدم
-const session = require('express-session');
-const { SESSION_SECRET } = process.env;
 
-Application.use(
-  session({
-    secret: SESSION_SECRET,
-    saveUninitialized: true,
-    resave: false,
-    cookie: { maxAge: 600000 },
-    rolling: false,
-  })
-);
 
-// الاتصال بقاعدة البيانات MongoDB
-const mongoose = require('mongoose');
-mongoose.connect(process.env.DATABASE_CONNECTION, { useNewUrlParser: true, useUnifiedTopology: true })
-  .then(() => {
-    console.log('Connected to MongoDB');
+
+
+// ==============
+// const express = require('express');
+// const Application = express();
+
+// require('dotenv').config();
+// const port = process.env.PORT || 1000;
+
+// // إعداد محرك القوالب
+// Application.set('view engine', 'ejs');
+// Application.use(express.static('public'));
+// Application.use(express.static('uploads'));
+
+// // استخدام المكونات المتوسطة (middleware) لتحليل البيانات
+// Application.use(express.urlencoded({ extended: false }));
+// Application.use(express.json());
+
+// // إعداد جلسات المستخدم
+// const session = require('express-session');
+// const { SESSION_SECRET } = process.env;
+
+// Application.use(
+//   session({
+//     secret: SESSION_SECRET,
+//     saveUninitialized: true,
+//     resave: false,
+//     cookie: { maxAge: 600000 },
+//     rolling: false,
+//   })
+// );
+
+// // الاتصال بقاعدة البيانات MongoDB
+// const mongoose = require('mongoose');
+// mongoose.connect(process.env.DATABASE_CONNECTION, { useNewUrlParser: true, useUnifiedTopology: true })
+//   .then(() => {
+//     console.log('Connected to MongoDB');
    
-  })
-  .catch((err) => {
-    console.error('Error connecting to MongoDB:', err);
-  });
+//   })
+//   .catch((err) => {
+//     console.error('Error connecting to MongoDB:', err);
+//   });
 
-// إضافة المسارات (Routes)
-const home = require('./Router/home_route');
-Application.use(home);
+// // إضافة المسارات (Routes)
+// const home = require('./Router/home_route');
+// Application.use(home);
 
-const loguser = require('./Router/users');
-Application.use(loguser);
+// const loguser = require('./Router/users');
+// Application.use(loguser);
 
-Application.listen(port, '0.0.0.0' ,process.env.PORT , async () => {
-    console.log(`Application running on http://localhost:${port}`);
- })
+// Application.listen(port, '0.0.0.0' ,process.env.PORT , async () => {
+//     console.log(`Application running on http://localhost:${port}`);
+//  })
 
-// معالجة الخطأ لصفحات غير موجودة
-Application.use((req, res) => {
-  res.status(404).send('لا يوجد صفحه ');
+// // معالجة الخطأ لصفحات غير موجودة
+// Application.use((req, res) => {
+//   res.status(404).send('لا يوجد صفحه ');
+// });
+
+// // تصدير التطبيق ليكون نقطة الدخول لـ Vercel
+// module.exports = Application;
+
+const express = require('express');
+const app = express();
+const port = process.env.PORT || 3000;
+
+app.get('/', (req, res) => {
+  res.send('Hello World!');
 });
 
-// تصدير التطبيق ليكون نقطة الدخول لـ Vercel
-module.exports = Application;
+app.listen(port, () => {
+  console.log(`Server running on http://localhost:${port}`);
+});
