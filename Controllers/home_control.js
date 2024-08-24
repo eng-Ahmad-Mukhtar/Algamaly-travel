@@ -304,7 +304,12 @@ const allUser = AysncHandler(async (req, res) => {
         res.render('allAgents', { data, loged_user: req.session.user, moment });
     }
     else {
-        res.render("notAllow")
+        console.log(req.session);
+        const dataArray = await Subscriber.find({});
+
+        const data = dataArray || []
+        res.render('allAgents', { data, loged_user: req.session.user, moment });
+        // res.render("notAllow")
     }
 })
 module.exports = {
