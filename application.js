@@ -125,7 +125,7 @@ const port = process.env.PORT || 1000;
 Application.set('view engine', 'ejs');
 // Application.use(express.static('public'));
 Application.use(express.static('uploads'));
-app.use(express.static(path.join(__dirname, 'public')));
+Application.use(express.static(path.join(__dirname, 'public')));
 Application.set('views', path.join(__dirname, 'views'));
 // // استخدام المكونات المتوسطة (middleware) لتحليل البيانات
 Application.use(express.urlencoded({ extended: false }));
