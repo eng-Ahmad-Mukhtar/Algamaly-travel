@@ -127,9 +127,7 @@ const mongoose = require('mongoose');
 mongoose.connect(process.env.DATABASE_CONNECTION, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => {
     console.log('Connected to MongoDB');
-    Application.listen(port, '0.0.0.0', async () => {
-       console.log(`Application running on http://localhost:${port}`);
-    })
+   
   })
   .catch((err) => {
     console.error('Error connecting to MongoDB:', err);
@@ -141,6 +139,10 @@ Application.use(home);
 
 const loguser = require('./Router/users');
 Application.use(loguser);
+
+Application.listen(port, '0.0.0.0' ,process.env.PORT , async () => {
+    console.log(`Application running on http://localhost:${port}`);
+ })
 
 // معالجة الخطأ لصفحات غير موجودة
 Application.use((req, res) => {
