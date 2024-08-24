@@ -182,6 +182,18 @@ app.get('/', (req, res) => {
     
    
 });
+app.get('/login', (req, res) => {
+    if (req.session.user) {
+    
+        let  complete = req.session.complete
+        res.status(200).render("add_new" , {complete ,  loged_user: req.session.user})
+     
+        }else{
+         res.render("notAllow")
+        }
+    
+   
+});
 
 
 
