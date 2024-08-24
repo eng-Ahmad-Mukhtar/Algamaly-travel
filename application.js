@@ -104,85 +104,85 @@
 
 
 
-// // ==============
-// const express = require('express');
-// const Application = express();
+// ==============
+const express = require('express');
+const Application = express();
 
-// // require('dotenv').config();
-// const port = process.env.PORT || 1000;
+// require('dotenv').config();
+const port = process.env.PORT || 1000;
 
-// // // إعداد محرك القوالب
-// Application.set('view engine', 'ejs');
-// Application.use(express.static('public'));
-// Application.use(express.static('uploads'));
+// // إعداد محرك القوالب
+Application.set('view engine', 'ejs');
+Application.use(express.static('public'));
+Application.use(express.static('uploads'));
+app.set('views', path.join(__dirname, 'views'));
+// // استخدام المكونات المتوسطة (middleware) لتحليل البيانات
+Application.use(express.urlencoded({ extended: false }));
+Application.use(express.json());
 
-// // // استخدام المكونات المتوسطة (middleware) لتحليل البيانات
-// Application.use(express.urlencoded({ extended: false }));
-// Application.use(express.json());
+// // إعداد جلسات المستخدم
+const session = require('express-session');
+const { SESSION_SECRET } = process.env;
 
-// // // إعداد جلسات المستخدم
-// const session = require('express-session');
-// const { SESSION_SECRET } = process.env;
+Application.use(
+  session({
+    secret: SESSION_SECRET,
+    saveUninitialized: true,
+    resave: false,
+    cookie: { maxAge: 600000 },
+    rolling: false,
+  })
+);
 
-// Application.use(
-//   session({
-//     secret: SESSION_SECRET,
-//     saveUninitialized: true,
-//     resave: false,
-//     cookie: { maxAge: 600000 },
-//     rolling: false,
-//   })
-// );
-
-// // // الاتصال بقاعدة البيانات MongoDB
-// const mongoose = require('mongoose');
-// mongoose.connect(process.env.DATABASE_CONNECTION, { useNewUrlParser: true, useUnifiedTopology: true })
-//   .then(() => {
-//     console.log('Connected to MongoDB');
+// // الاتصال بقاعدة البيانات MongoDB
+const mongoose = require('mongoose');
+mongoose.connect(process.env.DATABASE_CONNECTION, { useNewUrlParser: true, useUnifiedTopology: true })
+  .then(() => {
+    console.log('Connected to MongoDB');
    
-//   })
-//   .catch((err) => {
-//     console.error('Error connecting to MongoDB:', err);
-//   });
+  })
+  .catch((err) => {
+    console.error('Error connecting to MongoDB:', err);
+  });
 
-// // // إضافة المسارات (Routes)
-// const home = require('./Router/home_route');
-// Application.use(home);
+// // إضافة المسارات (Routes)
+const home = require('./Router/home_route');
+Application.use(home);
 
-// const loguser = require('./Router/users');
-// Application.use(loguser);
+const loguser = require('./Router/users');
+Application.use(loguser);
 
 
 
-// Application.listen(port,  () => {
-//     console.log(`Application running on http://localhost:${port}`);
-//  })
+Application.listen(port,  () => {
+    console.log(`Application running on http://localhost:${port}`);
+ })
 
-// // معالجة الخطأ لصفحات غير موجودة
-// Application.use((req, res) => {
-//   res.status(404).send('لا يوجد صفحه ');
+// معالجة الخطأ لصفحات غير موجودة
+Application.use((req, res) => {
+  res.status(404).send('لا يوجد صفحه ');
+});
+
+
+
+
+
+// const express = require('express');
+// const app = express();
+// const path = require('path');
+// const port = process.env.PORT || 3000;
+
+// app.set('view engine', 'ejs');
+// app.use(express.static('public'));
+// // app.set('views', './views');
+// app.set('views', path.join(__dirname, 'views'));
+// app.get('/', (req, res) => {
+//         res.render("index")
 // });
 
 
 
 
-
-const express = require('express');
-const app = express();
-const path = require('path');
-const port = process.env.PORT || 3000;
-
-app.set('view engine', 'ejs');
-app.use(express.static('public'));
-// app.set('views', './views');
-app.set('views', path.join(__dirname, 'views'));
-app.get('/', (req, res) => {
-        res.render("index")
-});
-
-
-
-
-app.listen(port, () => {
-  console.log(`Server running on http://localhost:${port}`);
-});
+// app.listen(port, () => {
+//   console.log(`Server running on http://localhost:${port}`);
+// });
