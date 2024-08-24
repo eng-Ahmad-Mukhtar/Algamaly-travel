@@ -17,6 +17,6 @@
     "dev": "nodemon application.js"
   },
   "engines": {
-    "node": "v19.8.1"
+    "node": "20.x"
   }
 }
