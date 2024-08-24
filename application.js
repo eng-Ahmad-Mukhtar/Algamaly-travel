@@ -139,7 +139,7 @@ Application.use(
     secret: SESSION_SECRET,
     saveUninitialized: true,
     resave: false,
-    cookie: { maxAge: 600000 },
+    // cookie: { maxAge: 600000 },
     rolling: false,
   })
 );
@@ -172,6 +172,10 @@ Application.listen(port,  () => {
 Application.use((req, res) => {
   res.status(404).send('لا يوجد صفحه ');
 });
+
+
+
+
 
 
 
