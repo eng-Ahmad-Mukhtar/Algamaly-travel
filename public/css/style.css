@@ -439,6 +439,9 @@
     border-right: none;
 }
 
+
+
+
 h2{
     text-align: center;
     font-size: 18px;
@@ -457,7 +460,7 @@ h2{
 
 .fl-table {
     border-radius: 5px;
-    font-size: 20px;
+    font-size: 12px;
     font-weight: normal;
     border: none;
     border-collapse: collapse;
@@ -474,7 +477,7 @@ h2{
 
 .fl-table td {
     border-right: 1px solid #f8f8f8;
-    font-size: 20px;
+    font-size: 12px;
 }
 
 .fl-table thead th {
@@ -503,7 +506,7 @@ h2{
         content: "Scroll horizontally >";
         display: block;
         text-align: right;
-        font-size: 20px;
+        font-size: 11px;
         color: white;
         padding: 0 0 10px;
     }
@@ -528,8 +531,8 @@ h2{
         box-sizing: border-box;
         overflow-x: hidden;
         overflow-y: auto;
-        width: 210px;
-        font-size: 20px;
+        width: 120px;
+        font-size: 13px;
         text-overflow: ellipsis;
     }
     .fl-table thead th {
@@ -557,17 +560,3 @@ h2{
         text-align: center;
     }
 }
-
-br{
-    color: black;
-}
-
-hr {
-    display: block;
-    margin-top: 0.5em;
-    margin-bottom: 0.5em;
-    margin-left: auto;
-    margin-right: auto;
-    border-style: inset;
-    border-width: 1px;
-  }

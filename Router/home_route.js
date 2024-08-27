@@ -24,7 +24,9 @@ router.get("/allAgents", home_control.allUser)
 
 
 
-
-
+// update section 
+// delete 
+router.post('/delete/:userId/:subscriptionId', home_control.deletee)
+router.post('/delete-travel-details/:userId', home_control.deleteAll)
 module.exports = router;
 

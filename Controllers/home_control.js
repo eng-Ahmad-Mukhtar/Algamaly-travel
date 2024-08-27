@@ -308,7 +308,66 @@ const allUser = AysncHandler(async (req, res) => {
         
         res.render("notAllow")
     }
+
+    
 })
+
+const deletee =AysncHandler( async (req, res) => {
+    try {
+        const { userId, subscriptionId } = req.params; // Extract userId and subscriptionId from the request parameters
+    
+        console.log(`Attempting to delete subscription ${subscriptionId} for user ${userId}`);
+    
+        // Find the user by their ID
+        const user = await Subscriber.findById(userId);
+        
+        if (!user) {
+          console.error('User not found');
+          return res.status(404).send('User not found.');
+        }
+    
+        // Remove the subscription from the array using the `pull` method
+        user.subscriptions.pull({ _id: subscriptionId });
+    
+        // Save the updated user document to the database
+        await user.save(); 
+    
+        console.log('Subscription deleted successfully');
+        res.redirect('/allAgents'); // Redirect to a page (e.g., the list of users) after deletion
+      } catch (error) {
+        console.error('Error deleting subscription:', error); // Detailed error log
+        res.status(500).send('Error deleting subscription.');
+      }
+  });
+
+  const deleteAll = AysncHandler( async (req, res) => {
+    try {
+      const { userId } = req.params; // Extract userId from the request parameters
+  
+      console.log(`Attempting to delete travel details for user ${userId}`);
+  
+      // Find the user by their ID and update the document to remove the travel_details field
+    //   const user = await Subscriber.findByIdAndUpdate(
+    //     userId, 
+    //     { $unset: { travel_details: "" } }, // The $unset operator removes the field
+    //     { new: true } // Return the updated document after the update
+    //   );
+    await Subscriber.findByIdAndDelete(userId);
+  
+    //   if (!user) {
+    //     console.error('User not found');
+    //     return res.status(404).send('User not found.');
+    //   }
+  
+      console.log('Travel details deleted successfully');
+      res.redirect('/allAgents'); // Redirect to a page (e.g., the list of users) after deletion
+    } catch (error) {
+      console.error('Error deleting travel details:', error); // Detailed error log
+      res.status(500).send('Error deleting travel details.');
+    }
+  });
+  
+
 module.exports = {
     Home_page,
     log_page,
@@ -324,7 +383,10 @@ module.exports = {
     name_search_id,
     traveldetails,
     allUser,
-    signIn
+    signIn, 
+    deletee,
+    deleteAll
+
 }
 
 
