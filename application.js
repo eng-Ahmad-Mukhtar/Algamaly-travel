@@ -110,6 +110,8 @@ const express = require('express');
 
 
 const Application = express();
+
+const fs = require('fs');
 const path = require('path');
 require('dotenv').config();
 const port = process.env.PORT || 1000;
@@ -202,18 +204,7 @@ mongoose.connect(process.env.DATABASE_CONNECTION, { useNewUrlParser: true, useUn
   );
 
 
-// 
-// 
-// 
-// 
 
-
-
-
-
-
-
-// 
 
 
 
@@ -238,10 +229,43 @@ const loguser = require('./Router/users');
 Application.use(loguser);
 
 
+const multer = require('multer');
+
+
+// Set up multer for file uploads
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, 'uploads/'); // مسار حفظ الصور
+  },
+  filename: function (req, file, cb) {
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+    cb(null, uniqueSuffix + path.extname(file.originalname)); // اسم فريد للملف
+  }
+});
+const upload = multer({ storage: storage });
+
+// نقطة النهاية لتحميل الصور
+Application.post('/upload-image', upload.single('image'), (req, res) => {
+  if (!req.file) {
+    return res.status(400).json({ message: 'No file uploaded' });
+  }
+
+  // إنشاء رابط الصورة
+  const imageUrl = `${req.protocol}://${req.get('host')}/uploads/${req.file.filename}`;
+
+  // يمكنك هنا رفع الصورة إلى خدمات سحابية مثل AWS S3 أو Cloudinary
+
+  res.json({ imageUrl }); // إعادة رابط الصورة إلى العميل
+});
+
+// تقديم الملفات الثابتة من مجلد 'uploads'
+Application.use('/uploads', express.static('uploads'));
+
 
 Application.listen(port,  () => {
     console.log(`Application running on http://localhost:${port}`);
  })
+
 
 // معالجة الخطأ لصفحات غير موجودة
 Application.use((req, res) => {

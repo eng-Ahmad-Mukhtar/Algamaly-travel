@@ -116,74 +116,57 @@
 
 
 
-
                 
-                 <div class="table-wrapper">
-                    <% data.forEach(student=> { %>
-                        <h2> تفاصيل الرحلة </h2>
-                        <form action="/delete-travel-details/<%= student._id %>" method="POST" style="display:inline;">
-                            <button class="btn btn-lg btn-danger" type="submit" onclick="return confirm('Are you sure you want to delete the travel details?');">حذف تفاصيل الرحلة</button>
-                          </form>
-                        <%= student.travel_details %>
-                     <table class="fl-table">
-                         <thead>
-                         <tr>
-                            <th> الأسم </th>
-                                <th>رقم الجواز </th>
-                                <th> اسم الوكيل </th>
-                                <th>الوجهة</th>
-                                <th> الحالة</th>
-                                <th>رقم الهاتف </th>
-                             
-                                <th>ملاحظات </th>
-                                <th>.</th>
-                         </tr>
-                         </thead>
-                       
-                         <tbody>
-                           
-                                <% student.subscriptions.forEach((one, index)=> { %>
-                         <tr>
-                            <td>
-                                <%=one.name%>
-                            </td>
-                            <td>
-                                <%=one.passportId%>
-                            </td>
-                            <td>
-                                <%=one.directorName%>
-                            </td>
-                            <td>
-                                <%= one.direction %>
-                            </td>
-                            <td>
-                                <%=one.status %>
-                            </td>
-                            <td>
-                                <%=one.phoneNumber%>
-                            </td>
-                            <td>
-                                <%=one.notes%>
-                            </td>
-                            <td>
-                                <form action="/delete/<%= student._id %>/<%= one._id %>" method="POST" style="display:inline;">
-                                    <button class="btn btn-lg btn-primary "  type="submit" onclick="return confirm('Are you sure you want to delete this subscription?');">حذف</button>
-                                </form>
-                            </td>
-                         </tr>
-                      
-                         <div>
-                         
-                          
-                        </div>
+        <div class="table-wrapper">
+            <% data.forEach(student => { %>
+                <h2>تفاصيل الرحلة</h2>
+                <form action="/delete-travel-details/<%= student._id %>" method="POST" style="display:inline;">
+                    <button class="btn btn-lg btn-danger" type="submit" onclick="return confirm('Are you sure you want to delete the travel details?');">
+                        حذف الرحلة كاملة
+                    </button>
+                </form>
+                <p><%= student.travel_details %></p>
+        
+                <table class="fl-table">
+                    <thead>
+                        <tr>
+                            <th>الأسم</th>
+                            <th>رقم الجواز</th>
+                            <th>اسم الوكيل</th>
+                            <th>الوجهة</th>
+                            <th>الحالة</th>
+                            <th>رقم الهاتف</th>
+                            <th>ملاحظات</th>
+                            <th>حذف</th>
+                            <th>مشاركة</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% student.subscriptions.forEach((one, index) => { %>
+                            <tr id="row-<%= one.id %>">
+                                <td><%= one.name %></td>
+                                <td><%= one.passportId %></td>
+                                <td><%= one.directorName %></td>
+                                <td><%= one.direction %></td>
+                                <td><%= one.status %></td>
+                                <td><%= one.phoneNumber %></td>
+                                <td><%= one.notes %></td>
+                                <td>
+                                    <form action="/delete/<%= student._id %>/<%= one._id %>" method="POST" style="display:inline;">
+                                        <button class="btn btn-lg btn-primary" type="submit" onclick="return confirm('Are you sure you want to delete this subscription?');">
+                                            حذف
+                                        </button>
+                                    </form>
+                                </td>
+                                <td>
+                                    <button class="btn btn-lg btn-primary" onclick="captureAndShareRow('<%= one.id %>')">مشاركه</button>
+                                </td>
+                            </tr>
                         <% }) %>
-                         <tbody>
-                     </table>
-                     <% }) %>
-                  
-                  
-                 </div>
-
+                    </tbody>
+                </table>
+            <% }) %>
+        </div>
 
 
 
@@ -223,6 +206,7 @@
     </div>
 
     <!-- JavaScript Libraries -->
+    <script src="https://unpkg.com/html-to-image@1.10.0"></script>
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="/lib/wow/wow.min.js"></script>
@@ -258,7 +242,76 @@
                 minLength: 1
             });
         });
+        function captureAndShareRow(rowId) {
+        var rowElement = document.getElementById('row-' + rowId);
+
+        // إخفاء الأزرار قبل التقاط الصورة
+        var buttonsToHide = rowElement.querySelectorAll('button');
+        buttonsToHide.forEach(button => button.style.display = 'none');
+
+        // تحويل الصف إلى صورة مع خلفية بيضاء
+        var options = { backgroundColor: '#ffffff' }; // خلفية بيضاء
+        htmlToImage.toPng(rowElement, options)
+            .then(function (dataUrl) {
+                // إنشاء رابط لتحميل الصورة
+                var link = document.createElement('a');
+                link.href = dataUrl;
+                link.download = 'row-' + rowId + '.jpg';
+                link.click();
+
+                // تحميل الصورة على السيرفر ثم مشاركة الرابط على الواتساب
+                uploadImageAndShareOnWhatsApp(dataUrl);
+            })
+            .catch(function (error) {
+                console.error('Error converting to image:', error);
+            })
+            .finally(() => {
+                // إعادة إظهار الأزرار بعد التقاط الصورة
+                buttonsToHide.forEach(button => button.style.display = 'inline-block');
+            });
+    }
+
+    function uploadImageAndShareOnWhatsApp(imageDataUrl) {
+        // تحويل Data URL إلى Blob
+        var blob = dataURLtoBlob(imageDataUrl);
+        var formData = new FormData();
+        formData.append('image', blob, 'row.png');
+
+        // إرسال الصورة إلى السيرفر
+        fetch('/upload-image', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.imageUrl) {
+                // مشاركة رابط الصورة على الواتساب
+                var whatsappLink = "https://wa.me/?text=Check%20out%20this%20image:%20" + encodeURIComponent(data.imageUrl);
+                window.open(whatsappLink, '_blank');
+            } else {
+                console.error('Failed to upload image.');
+            }
+        })
+        .catch(error => {
+            console.error('Error uploading image:', error);
+        });
+    }
+
+    // تحويل Data URL إلى Blob
+    function dataURLtoBlob(dataurl) {
+        var arr = dataurl.split(','), mime = arr[0].match(/:(.*?);/)[1],
+        bstr = atob(arr[1]), n = bstr.length, u8arr = new Uint8Array(n);
+        while (n--) {
+            u8arr[n] = bstr.charCodeAt(n);
+        }
+        return new Blob([u8arr], { type: mime });
+    }
+
+
     </script>
+
+
+
 </body>
 
 </html>

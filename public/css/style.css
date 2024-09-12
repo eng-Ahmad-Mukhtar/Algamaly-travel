@@ -460,7 +460,7 @@ h2{
 
 .fl-table {
     border-radius: 5px;
-    font-size: 12px;
+    font-size: 20PX;
     font-weight: normal;
     border: none;
     border-collapse: collapse;
@@ -477,7 +477,7 @@ h2{
 
 .fl-table td {
     border-right: 1px solid #f8f8f8;
-    font-size: 12px;
+    font-size: 20PX;
 }
 
 .fl-table thead th {
@@ -525,14 +525,14 @@ h2{
         overflow-x: auto;
     }
     .fl-table td, .fl-table th {
-        padding: 20px .625em .625em .625em;
+        padding: 20px .625em .625em 10em;
         height: 60px;
         vertical-align: middle;
         box-sizing: border-box;
         overflow-x: hidden;
         overflow-y: auto;
         width: 120px;
-        font-size: 13px;
+        font-size: 20PX;
         text-overflow: ellipsis;
     }
     .fl-table thead th {
