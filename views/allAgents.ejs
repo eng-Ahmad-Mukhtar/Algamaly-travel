@@ -271,43 +271,93 @@
             });
     }
 
-    function uploadImageAndShareOnWhatsApp(imageDataUrl) {
-        // تحويل Data URL إلى Blob
-        var blob = dataURLtoBlob(imageDataUrl);
-        var formData = new FormData();
-        formData.append('image', blob, 'row.png');
+    function captureAndShareRow(rowId) {
+    var rowElement = document.getElementById('row-' + rowId);
+    var table = rowElement.closest('table'); // الحصول على الجدول بأكمله
+    var headerRow = table.querySelector('thead tr'); // رأس الجدول
+    
+    // نسخ رأس الجدول والصف المطلوب فقط
+    var clonedTable = document.createElement('table');
+    clonedTable.classList.add('fl-table'); // نسخ تصميم الجدول
 
-        // إرسال الصورة إلى السيرفر
-        fetch('/upload-image', {
-            method: 'POST',
-            body: formData
+    // نسخ رأس الجدول بدون أعمدة الحذف والمشاركة
+    var clonedHeader = headerRow.cloneNode(true);
+    clonedHeader.querySelectorAll('th:nth-child(8), th:nth-child(9)').forEach(col => col.remove());
+    clonedTable.appendChild(clonedHeader);
+
+    // نسخ الصف المطلوب بدون أعمدة الحذف والمشاركة
+    var clonedRow = rowElement.cloneNode(true);
+    clonedRow.querySelectorAll('td:nth-child(8), td:nth-child(9)').forEach(col => col.remove());
+    clonedTable.appendChild(clonedRow);
+
+    // إخفاء الأزرار في الصف المنسوخ
+    var buttonsToHide = clonedRow.querySelectorAll('button');
+    buttonsToHide.forEach(button => button.style.display = 'none');
+
+    // تحويل الجدول المنسوخ إلى صورة مع خلفية بيضاء
+    var container = document.createElement('div');
+    container.appendChild(clonedTable);
+    document.body.appendChild(container); // إضافة الجدول مؤقتًا إلى الـ DOM
+
+    var options = {
+        backgroundColor: '#ffffff' // تعيين خلفية بيضاء
+    };
+
+    // تحويل الجدول المنسوخ إلى صورة
+    htmlToImage.toPng(container, options)
+        .then(function (dataUrl) {
+            // إنشاء رابط لتحميل الصورة
+            var link = document.createElement('a');
+            link.href = dataUrl;
+            link.download = 'row-' + rowId + '.jpg';
+            link.click();
+
+            // تحميل الصورة على السيرفر ثم مشاركة الرابط على الواتساب
+            uploadImageAndShareOnWhatsApp(dataUrl);
         })
-        .then(response => response.json())
-        .then(data => {
-            if (data.imageUrl) {
-                // مشاركة رابط الصورة على الواتساب
-                var whatsappLink = "https://wa.me/?text=Check%20out%20this%20image:%20" + encodeURIComponent(data.imageUrl);
-                window.open(whatsappLink, '_blank');
-            } else {
-                console.error('Failed to upload image.');
-            }
+        .catch(function (error) {
+            console.error('Error converting to image:', error);
         })
-        .catch(error => {
-            console.error('Error uploading image:', error);
+        .finally(() => {
+            // إزالة الجدول المؤقت من الـ DOM
+            container.remove();
         });
-    }
+}
 
+function uploadImageAndShareOnWhatsApp(imageDataUrl) {
     // تحويل Data URL إلى Blob
-    function dataURLtoBlob(dataurl) {
-        var arr = dataurl.split(','), mime = arr[0].match(/:(.*?);/)[1],
-        bstr = atob(arr[1]), n = bstr.length, u8arr = new Uint8Array(n);
-        while (n--) {
-            u8arr[n] = bstr.charCodeAt(n);
+    var blob = dataURLtoBlob(imageDataUrl);
+    var formData = new FormData();
+    formData.append('image', blob, 'row.png');
+
+    // إرسال الصورة إلى السيرفر
+    fetch('/upload-image', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.imageUrl) {
+            // مشاركة رابط الصورة على الواتساب
+            var whatsappLink = "https://wa.me/?text=Check%20out%20this%20image:%20" + encodeURIComponent(data.imageUrl);
+            window.open(whatsappLink, '_blank');
+        } else {
+            console.error('Failed to upload image.');
         }
-        return new Blob([u8arr], { type: mime });
+    })
+    .catch(error => {
+        console.error('Error uploading image:', error);
+    });
+}
+
+function dataURLtoBlob(dataurl) {
+    var arr = dataurl.split(','), mime = arr[0].match(/:(.*?);/)[1],
+    bstr = atob(arr[1]), n = bstr.length, u8arr = new Uint8Array(n);
+    while (n--) {
+        u8arr[n] = bstr.charCodeAt(n);
     }
-
-
+    return new Blob([u8arr], { type: mime });
+}
     </script>
 
 
