@@ -18,14 +18,23 @@ router.get('/autocompletee/', home_control.name_search_id)
 router.post('/search_namee', home_control.search_subiscription_id)
 router.get("/subiscription_information_by_direction", home_control.subiscription_information_by_direction)
 router.get('/autocompleteee/', home_control.name_search_direction)
+
+
+
+
 router.post('/search_nameee', home_control.search_subiscription_direction)
 router.get("/allAgents", home_control.allUser)
 
 
 
 
-// update section 
-// delete 
+router.get("/add_introducer", home_control.add_introducer)
+router.post("/add", home_control.add)
+router.get("/search_introducer", home_control.introducer_page)
+router.get('/autosuggest/', home_control.name_suggest)
+
+router.post('/searchIntroducer', home_control.search_introducer)
+
 router.post('/delete/:userId/:subscriptionId', home_control.deletee)
 router.post('/delete-travel-details/:userId', home_control.deleteAll)
 module.exports = router;

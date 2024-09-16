@@ -18,7 +18,7 @@ const signIn = AysncHandler(async (req, res) => {
 
 const log_page = AysncHandler(async (req, res) => {
     if (req.session.user) {
-       
+
         let complete = req.session.complete
         res.status(200).render("add_new", { complete, loged_user: req.session.user })
 
@@ -26,6 +26,8 @@ const log_page = AysncHandler(async (req, res) => {
         res.render("notAllow")
     }
 })
+
+
 
 
 
@@ -96,9 +98,49 @@ const adding = AysncHandler(async (req, res) => {
 
 
 
+const introducer = require("../models/introducer")
+
+const add = AysncHandler(async (req, res) => {
+
+    const { name, directorName, date, direction, status, phoneNumber, notes } = req.body;
+
+    try {
+        let subscriber = await introducer.findOne({ name });
+
+        if (!subscriber) {
+
+            subscriber = new introducer({ name, subscriptions: [] });
+        }
 
 
-// search by name
+        const newSubscription = {
+            name: name,
+            directorName: directorName,
+            date: date,
+            direction: direction,
+            status: status,
+            phoneNumber: phoneNumber,
+            notes: notes
+        };
+        if (newSubscription) {
+            subscriber.subscriptions.push(newSubscription);
+            await subscriber.save();
+            req.session.complete = "تمت الإضافة بنجاح"
+            res.redirect("/add_introducer")
+        }
+
+    }
+    catch (error) {
+        console.log(error);
+        res.status(500).json({ error: 'حدث خطأ في إضافة الاشتراك' });
+    }
+
+})
+
+
+
+
+
 const one_subiscription_information = AysncHandler(async (req, res) => {
     if (req.session.user) {
         const data = req.session.students || [];
@@ -110,12 +152,45 @@ const one_subiscription_information = AysncHandler(async (req, res) => {
 })
 
 
+
+const introducer_page = AysncHandler(async (req, res) => {
+    if (req.session.user) {
+        const data = req.session.students || [];
+        res.status(200).render("search_introducer", { data, loged_user: req.session.user, moment })
+
+    } else {
+        res.render("notAllow")
+    }
+})
+
+const search_introducer = AysncHandler(async (req, res) => {
+    const { name } = req.body;
+
+
+    const dataArray = await introducer.find({
+        'name': name
+    }, {
+        'name': 1,
+        'subscriptions': 1,
+        'createdAt': 1,
+        'updatedAt': 1
+    });
+
+
+    req.session.students = dataArray;
+
+
+    res.redirect('/search_introducer');
+});
+
+
+
 const name_search = AysncHandler(async (req, res) => {
     try {
         const term = req.query.term || '';
         const regex = new RegExp(term, 'i');
 
-        // البحث عن passportId ضمن الاشتراكات
+
         const users = await Subscriber.find({
             'subscriptions.name': regex
         }).select('subscriptions.name').limit(10);
@@ -133,9 +208,45 @@ const name_search = AysncHandler(async (req, res) => {
     }
 });
 
+// 
+// 
+// 
+// 
+const name_suggest = AysncHandler(async (req, res) => {
+    try {
+        var regex = new RegExp(req.query["term"], 'i');
+        var substitute = introducer.find({ name: regex }, { 'name': 1 }).limit(6);
+
+        var data = await substitute.exec();
+
+        var result = [];
+        if (data && data.length > 0) {
+            data.forEach(element => {
+                let obj = {
+                    label: element.name
+                };
+                result.push(obj);
+            });
+        }
+
+        res.jsonp(result);
+    } catch (err) {
+        res.status(500).send(err);
+    }
+});
 
 
+const add_introducer = AysncHandler(async (req, res) => {
+    if (req.session.user) {
 
+        let complete = req.session.complete
+        res.status(200).render("add_itroducer", { complete, loged_user: req.session.user })
+
+    } else {
+        res.render("notAllow")
+    }
+
+})
 
 
 
@@ -146,10 +257,10 @@ const search_subiscription = AysncHandler(async (req, res) => {
     const dataArray = await Subscriber.find({
         'subscriptions.name': name
     }, {
-        'subscriptions.$': 1,  // Return only the matched subscription
-        'travel_details': 1,    // Return the travel details of the client
-        'createdAt': 1,         // Return the creation timestamp
-        'updatedAt': 1          // Return the updated timestamp
+        'subscriptions.$': 1,
+        'travel_details': 1,
+        'createdAt': 1,
+        'updatedAt': 1
     });
 
 
@@ -157,12 +268,9 @@ const search_subiscription = AysncHandler(async (req, res) => {
     req.session.students = dataArray
     res.redirect('/subiscription_information');
 
-
-
-
 })
 
-// search by id
+
 const subiscription_information_by_id = AysncHandler(async (req, res) => {
     if (req.session.user) {
         const data = req.session.students || [];
@@ -180,7 +288,7 @@ const name_search_id = AysncHandler(async (req, res) => {
         const term = req.query.term || '';
         const regex = new RegExp(term, 'i');
 
-        // البحث عن passportId ضمن الاشتراكات
+
         const users = await Subscriber.find({
             'subscriptions.passportId': regex
         }).select('subscriptions.passportId').limit(10);
@@ -206,10 +314,10 @@ const search_subiscription_id = AysncHandler(async (req, res) => {
     const dataArray = await Subscriber.find({
         'subscriptions.passportId': passportId
     }, {
-        'subscriptions.$': 1,  // Return only the matched subscription
-        'travel_details': 1,    // Return the travel details of the client
-        'createdAt': 1,         // Return the creation timestamp
-        'updatedAt': 1          // Return the updated timestamp
+        'subscriptions.$': 1,
+        'travel_details': 1,
+        'createdAt': 1,
+        'updatedAt': 1
     });
 
 
@@ -219,7 +327,7 @@ const search_subiscription_id = AysncHandler(async (req, res) => {
 
 
 })
-// search by direction 
+
 const subiscription_information_by_direction = AysncHandler(async (req, res) => {
     if (req.session.user) {
         const data = req.session.students || [];
@@ -242,11 +350,6 @@ const name_search_direction = AysncHandler(async (req, res) => {
         }).select('subscriptions.direction').limit(10);
 
 
-        // const results = users.flatMap(user => 
-        //     user.subscriptions
-        //         .filter(sub => regex.test(sub.direction))
-        //         .map(sub => ({ label: sub.direction }))
-        // );
 
 
         const uniqueDirections = new Set();
@@ -278,10 +381,10 @@ const search_subiscription_direction = AysncHandler(async (req, res) => {
     const dataArray = await Subscriber.find({
         'subscriptions.direction': direction
     }, {
-        'subscriptions.$': 1,  // Return only the matched subscription
-        'travel_details': 1,    // Return the travel details of the client
-        'createdAt': 1,         // Return the creation timestamp
-        'updatedAt': 1          // Return the updated timestamp
+        'subscriptions.$': 1,
+        'travel_details': 1,
+        'createdAt': 1,
+        'updatedAt': 1
     });
 
 
@@ -292,9 +395,6 @@ const search_subiscription_direction = AysncHandler(async (req, res) => {
 
 })
 
-// all
-
-
 const allUser = AysncHandler(async (req, res) => {
     if (req.session.user) {
         console.log(req.session);
@@ -304,69 +404,58 @@ const allUser = AysncHandler(async (req, res) => {
         res.render('allAgents', { data, loged_user: req.session.user, moment });
     }
     else {
-        
-        
+
+
         res.render("notAllow")
     }
 
-    
+
 })
 
-const deletee =AysncHandler( async (req, res) => {
+const deletee = AysncHandler(async (req, res) => {
     try {
-        const { userId, subscriptionId } = req.params; // Extract userId and subscriptionId from the request parameters
-    
-        console.log(`Attempting to delete subscription ${subscriptionId} for user ${userId}`);
-    
-        // Find the user by their ID
-        const user = await Subscriber.findById(userId);
-        
-        if (!user) {
-          console.error('User not found');
-          return res.status(404).send('User not found.');
-        }
-    
-        // Remove the subscription from the array using the `pull` method
-        user.subscriptions.pull({ _id: subscriptionId });
-    
-        // Save the updated user document to the database
-        await user.save(); 
-    
-        console.log('Subscription deleted successfully');
-        res.redirect('/allAgents'); // Redirect to a page (e.g., the list of users) after deletion
-      } catch (error) {
-        console.error('Error deleting subscription:', error); // Detailed error log
-        res.status(500).send('Error deleting subscription.');
-      }
-  });
+        const { userId, subscriptionId } = req.params;
 
-  const deleteAll = AysncHandler( async (req, res) => {
-    try {
-      const { userId } = req.params; // Extract userId from the request parameters
-  
-      console.log(`Attempting to delete travel details for user ${userId}`);
-  
-      // Find the user by their ID and update the document to remove the travel_details field
-    //   const user = await Subscriber.findByIdAndUpdate(
-    //     userId, 
-    //     { $unset: { travel_details: "" } }, // The $unset operator removes the field
-    //     { new: true } // Return the updated document after the update
-    //   );
-    await Subscriber.findByIdAndDelete(userId);
-  
-    //   if (!user) {
-    //     console.error('User not found');
-    //     return res.status(404).send('User not found.');
-    //   }
-  
-      console.log('Travel details deleted successfully');
-      res.redirect('/allAgents'); // Redirect to a page (e.g., the list of users) after deletion
+        console.log(`Attempting to delete subscription ${subscriptionId} for user ${userId}`);
+
+
+        const user = await Subscriber.findById(userId);
+
+        if (!user) {
+            console.error('User not found');
+            return res.status(404).send('User not found.');
+        }
+
+
+        user.subscriptions.pull({ _id: subscriptionId });
+
+
+        await user.save();
+
+        console.log('Subscription deleted successfully');
+        res.redirect('/allAgents');
     } catch (error) {
-      console.error('Error deleting travel details:', error); // Detailed error log
-      res.status(500).send('Error deleting travel details.');
+        console.error('Error deleting subscription:', error);
+        res.status(500).send('Error deleting subscription.');
     }
-  });
-  
+});
+
+const deleteAll = AysncHandler(async (req, res) => {
+    try {
+        const { userId } = req.params;
+
+
+
+        await Subscriber.findByIdAndDelete(userId);
+
+
+        res.redirect('/allAgents');
+    } catch (error) {
+
+        res.status(500).send('Error deleting travel details.');
+    }
+});
+
 
 module.exports = {
     Home_page,
@@ -383,9 +472,14 @@ module.exports = {
     name_search_id,
     traveldetails,
     allUser,
-    signIn, 
+    signIn,
     deletee,
-    deleteAll
+    deleteAll,
+    name_suggest,
+    add_introducer,
+    add,
+    introducer_page,
+     search_introducer
 
 }
 
