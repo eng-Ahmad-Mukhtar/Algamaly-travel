@@ -127,7 +127,7 @@
                                     <%= one.directorName %>
                                 </td>
                                 <td>
-                                    <%=   moment(one.date ).subtract(10, 'days').calendar(); %>
+                                    <%=  moment( one.date).format('L'); %>
                                 </td>
                                 <td>
                                     <%= one.direction %>
