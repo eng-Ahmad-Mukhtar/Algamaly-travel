@@ -74,6 +74,7 @@
                                 <a href="/subiscription_information_by_direction" class="dropdown-item"> بالوجهة</a>
                                 <a href="/allAgents" class="dropdown-item"> جميع العملاء</a>
                                 <a href="/search_introducer" class="dropdown-item"> طالب تقديم </a>
+                                <a href="/allIntroducers" class="dropdown-item"> جميع المقدمين </a>
                             </div>
                         </div>
                      
@@ -107,7 +108,7 @@
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-floating">
-                                            <input name="name" type="text" class="form-control" id="name" placeholder="الأسم" required>
+                                            <input name="name" type="text" class="form-control" id="searchName" placeholder="الأسم" required>
                                             <label for="name">الاسم</label>
                                         </div>
                                     </div>
@@ -209,6 +210,38 @@
 			});
 		},
 		)
+
+
+      
+
+
+$(function () {
+    $('#searchName').autocomplete({
+        source: function (req, res) {
+            $.ajax({
+                url: "autosuggest/",
+                dataType: "jsonp",
+                typy: "GET",
+                data: req,
+                success: function (data) {
+                    res(data)
+                },
+                error: function (err) {
+                    console.log(err);
+                }
+            });
+        },
+
+        minLength: 1,
+        select: function (event, ui) {
+            if (ui.item) {
+                $('#searchName').text(ui.item.label)
+            }
+        }
+    });
+},
+)
+
 </script>
 
 

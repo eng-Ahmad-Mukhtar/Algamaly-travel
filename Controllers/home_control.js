@@ -456,6 +456,23 @@ const deleteAll = AysncHandler(async (req, res) => {
     }
 });
 
+const allIntroducers = AysncHandler(async (req, res) => {
+    if (req.session.user) {
+        console.log(req.session);
+        const dataArray = await introducer.find({});
+
+        const data = dataArray || []
+        res.render('all_introducers', { data, loged_user: req.session.user, moment });
+    }
+    else {
+
+
+        res.render("notAllow")
+    }
+
+
+})
+
 
 module.exports = {
     Home_page,
@@ -479,7 +496,8 @@ module.exports = {
     add_introducer,
     add,
     introducer_page,
-     search_introducer
+     search_introducer,
+     allIntroducers
 
 }
 

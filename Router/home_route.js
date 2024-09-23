@@ -37,5 +37,9 @@ router.post('/searchIntroducer', home_control.search_introducer)
 
 router.post('/delete/:userId/:subscriptionId', home_control.deletee)
 router.post('/delete-travel-details/:userId', home_control.deleteAll)
+
+
+
+router.get("/allIntroducers", home_control.allIntroducers)
 module.exports = router;
 
