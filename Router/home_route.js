@@ -41,5 +41,9 @@ router.post('/delete-travel-details/:userId', home_control.deleteAll)
 
 
 router.get("/allIntroducers", home_control.allIntroducers)
+router.post('/delete-introducer/:userId', home_control.deleteintroducer)
+
+
+
 module.exports = router;
 

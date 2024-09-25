@@ -456,6 +456,23 @@ const deleteAll = AysncHandler(async (req, res) => {
     }
 });
 
+
+const deleteintroducer = AysncHandler(async (req, res) => {
+    try {
+        const { userId } = req.params;
+
+
+
+        await introducer.findByIdAndDelete(userId);
+
+
+        res.redirect('/allIntroducers');
+    } catch (error) {
+
+        res.status(500).send('Error deleting travel details.');
+    }
+});
+
 const allIntroducers = AysncHandler(async (req, res) => {
     if (req.session.user) {
         console.log(req.session);
@@ -496,8 +513,9 @@ module.exports = {
     add_introducer,
     add,
     introducer_page,
-     search_introducer,
-     allIntroducers
+    search_introducer,
+    allIntroducers,
+    deleteintroducer
 
 }
 
