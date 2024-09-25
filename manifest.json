@@ -2,12 +2,12 @@
     "name": "AL-GAMALY",
     "icons": [
       {
-        "src": "/img/snapedit_1723081495665.png",
+        "src": "/public/img/snapedit_1723081495665.png",
         "sizes": "192x192",
         "type": "image/png"
       },
       {
-        "src": "/img/snapedit_1723081495665.png",
+        "src": "/public/img/snapedit_1723081495665.png",
         "sizes": "512x512",
         "type": "image/png"
       }
